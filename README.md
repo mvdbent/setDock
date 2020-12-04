@@ -1,4 +1,4 @@
-# setDock script using Dockutil binary
+# setDock script using dockutil binary
 
 _**Current state of the scripts are:** "the scripts are examples how you can do this"_
 
@@ -15,10 +15,10 @@ THE POSSIBILITY OF SUCH DAMAGE.
 ```
 ![GitHub](https://img.shields.io/github/license/mvdbent/MSP-example-Scripts)
 
-This script is a example how to configures users docks using docktutil
+This script is a example how to configures users docks using `docktutil`
 
 **Requirements**
-Download and deploy dockutil binary to /usr/local/bin/
-_source dockutil https://github.com/kcrawford/dockutil/_
+Download and deploy `dockutil` binary to /usr/local/bin/
+_source `dockutil` https://github.com/kcrawford/dockutil/_
 
 Compatible with Mac OS X 10.9.x thru 10.15 and on Big Sure macOS 11.x
