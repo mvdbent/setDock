@@ -30,6 +30,15 @@
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
+# Check if Python is installed.
+if which python > /dev/null 2>&1;
+then
+	echo "Python is installed"
+else
+	echo "Python is not installed, please install Python to run this script"
+	exit 1
+fi
+
 # get the currently logged in user
 currentUser=$( echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ { print $3 }' )
 
@@ -57,7 +66,7 @@ runAsUser() {
 dockutil="/usr/local/bin/dockutil"
 
 # path to plist
-plist=$(${userHome}/Library/Preferences/com.apple.dock.plist)
+plist="${userHome}/Library/Preferences/com.apple.dock.plist"
 
 # reset Dock to default
 runAsUser defaults delete com.apple.dock; killall Dock
