@@ -16,7 +16,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # 
 # version 1.0
-# Written by: 	Mischa van der Bent	2020
+# Written by: Mischa van der Bent
 #
 # DESCRIPTION
 # This script configures users docks using docktutil
@@ -48,6 +48,9 @@ userHome=$(dscl . -read /users/${currentUser} NFSHomeDirectory | cut -d " " -f 2
 # get uid logged in user
 uid=$(id -u "${currentUser}")
 
+# path to plist
+plist="${userHome}/Library/Preferences/com.apple.dock.plist"
+
 # convenience function to run a command as the current user
 # usage:
 #   runAsUser command arguments...
@@ -58,40 +61,55 @@ runAsUser() {
 		echo "no user logged in"
 		# uncomment the exit command
 		# to make the function exit with an error when no user is logged in
-		 exit 1
+		exit 1
 	fi
 }
 
-# location dockutil
-dockutil="/usr/local/bin/dockutil"
+# Locate dockutil
+if [ -x "/usr/local/bin/dockutil" ]; then
+	dockutil="/usr/local/bin/dockutil"
+else
+	echo "cannot find dockutil, exiting"
+	exit 1
+fi
 
-# path to plist
-plist="${userHome}/Library/Preferences/com.apple.dock.plist"
+#dockutil Version
+dockutilVersion=$(${dockutil} --version)
+echo "Dockutil version = ${dockutilVersion}"
 
-# reset Dock to default
-runAsUser defaults delete com.apple.dock; killall Dock
+# reset Dock to Apple default
+#runAsUser defaults delete com.apple.dock; killall Dock
+#echo "Reset to Apple default dock"
 
 # Create a clean Dock
-# $dockutil --remove all --no-restart ${plist}
+$dockutil --remove all --no-restart
+echo "clean-out the Dock"
 
 # Setup dock, in various examples
-$dockutil --add /System/Applications/Launchpad.app --position 1 --allhomes --no-restart ${plist}
-$dockutil --add /Applications/zoom.us.app --position 2 --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Microsoft\ Teams.app --position 3 --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Google\ Chrome.app --position 4 --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Microsoft\ Outlook.app --after 'Google Chrome' --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Microsoft\ Word.app --after 'Microsoft Outlook' --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Microsoft\ Excel.app --after 'Microsoft Word' --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Microsoft\ PowerPoint.app --after 'Microsoft Excel' --allhomes --no-restart ${plist}
-$dockutil --add /Applications/BBEdit.app --after 'Microsoft PowerPoint' --allhomes --no-restart ${plist}
-$dockutil --add /Applications/Self\ Service.app --position end --allhomes --no-restart ${plist}
-$dockutil --add /System/Applications/System Preferences.app --before 'Self Service' --allhomes --no-restart ${plist}
-$dockutil --add '/Applications' --view grid --display stack --allhomes --no-restart ${plist}
-$dockutil --add '~/Downloads' --view list --display stack --sort dateadded --allhomes --no-restart ${plist}
+$dockutil --add /System/Applications/Launchpad.app --position 1 --no-restart
+$dockutil --add /Applications/zoom.us.app --position 2 --no-restart
+$dockutil --add /Applications/Microsoft\ Teams.app --position end --no-restart
+$dockutil --add /Applications/Google\ Chrome.app --position end  --no-restart
+$dockutil --add /Applications/Microsoft\ Outlook.app --after 'Google Chrome' --no-restart
+$dockutil --add /Applications/Microsoft\ Word.app --after 'Microsoft Outlook' --no-restart
+$dockutil --add /Applications/Microsoft\ Excel.app --after 'Microsoft Word' --no-restart
+$dockutil --add /Applications/Microsoft\ PowerPoint.app --after 'Microsoft Excel' --no-restart
+$dockutil --add /Applications/BBEdit.app --after 'Microsoft PowerPoint' --no-restart
+$dockutil --add /Applications/Self\ Service.app --position end --no-restart
+$dockutil --add /System/Applications/System Preferences.app --before 'Self Service' --no-restart
+$dockutil --add '/Applications' --view grid --display folder --sort name --no-restart
+$dockutil --add '~/Downloads' --view list --display stack --sort dateadded --no-restart
+
+echo "Created Default Dock"
+
+# Disable show recent
+runAsUser defaults write com.apple.dock show-recents -bool FALSE
+echo "Hide show recent"
 
 sleep 3
 
-# Kill dock to load new setting
+# Kill dock to reset it
 killall -KILL Dock
+echo "Restarted the Dock"
 
 exit 0
