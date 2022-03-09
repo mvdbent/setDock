@@ -1,22 +1,13 @@
 #!/bin/bash
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-#
-# THE SCRIPTS ARE PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
-# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
-# AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
-# I BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
-# OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
-# THE POSSIBILITY OF SUCH DAMAGE.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # 
 # version 1.0
 # Written by: Mischa van der Bent
+#
+# Permission is granted to use this code in any way you want.
+# Credit would be nice, but not obligatory.
+# Provided "as is", without warranty of any kind, express or implied.
 #
 # DESCRIPTION
 # This script configures users docks using docktutil
@@ -26,7 +17,7 @@
 # Deploy dockutil binary to /usr/local/bin/
 # Compatible with Mac OS X 10.9.x thru 10.15 and on Big Sure macOS 11.x
 #
-####################################################################################################
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
@@ -39,28 +30,27 @@ else
 	exit 1
 fi
 
-# get the currently logged in user
+## Collect importend user information
+
+## Get the currently logged in user
 currentUser=$( echo "show State:/Users/ConsoleUser" | scutil | awk '/Name :/ { print $3 }' )
 
-#Current User home folder - do it this way in case the folder isn't in /Users
-userHome=$(dscl . -read /users/${currentUser} NFSHomeDirectory | cut -d " " -f 2)
-
-# get uid logged in user
+## Get uid logged in user
 uid=$(id -u "${currentUser}")
 
-# path to plist
+## Current User home folder - do it this way in case the folder isn't in /Users
+userHome=$(dscl . -read /users/${currentUser} NFSHomeDirectory | cut -d " " -f 2)
+
+## Path to plist
 plist="${userHome}/Library/Preferences/com.apple.dock.plist"
 
-# convenience function to run a command as the current user
-# usage:
-#   runAsUser command arguments...
+## Function to run a command as the current user
+## usage: runAsUser command arguments...
 runAsUser() {  
-	if [ "${currentUser}" != "loginwindow" ]; then
+	if [[ "${currentUser}" != "loginwindow" ]]; then
 		launchctl asuser "$uid" sudo -u "${currentUser}" "$@"
 	else
 		echo "no user logged in"
-		# uncomment the exit command
-		# to make the function exit with an error when no user is logged in
 		exit 1
 	fi
 }
