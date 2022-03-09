@@ -17,6 +17,8 @@ THE POSSIBILITY OF SUCH DAMAGE.
 
 The scripts are a example how to configures users docks using `docktutil`
 
+Read more here https://appleshare.it/posts/use-dockutil-in-a-script/
+
 **Requirements**
 dockutil Version 3.0.0 or higher installed to /usr/local/bin/
 _source `dockutil` https://github.com/kcrawford/dockutil/_
