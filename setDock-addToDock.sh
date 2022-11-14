@@ -27,6 +27,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 # $6 = View ( grid - fan - list - auto )
 # $7 = Display ( folder - stack )
 # $8 = Sort ( name - dateadded - datemodified - datecreated - kind )
+# $9 = Label ( Label or bundle identifier of item to add, remove, move or find )
 
 if [[ $1 == '/' ]]; then
     # when $1 is /, then use the variables from Jamf 
@@ -35,6 +36,7 @@ if [[ $1 == '/' ]]; then
     view="$6"
     display="$7"
     sort="$8"
+    label="$9"
 else
     # default values for testing
     appPath="/Applications/Safari.app"
@@ -42,6 +44,7 @@ else
     view=""
     display="folder"
     sort=""
+    label=""
 fi
 
 # COLLECT IMPORTANT USER INFORMATION
@@ -105,6 +108,10 @@ fi
 
 if [[ ${sort} != "" ]]; then
 	arguments+=("--sort" "${sort}")
+fi
+
+if [[ ${label} != "" ]]; then
+	arguments+=("--label" "${label}")
 fi
 
 # Add Application our Files and Documents to the Dock
